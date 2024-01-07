@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Controle de Pedidos</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th,
+        td {
+            border: 1px solid black;
+            padding: 8px;
+            text-align: center;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        .producao {
+            background-color: red;
+            color: white;
+        }
+
+        .separado {
+            background-color: green;
+            color: white;
+        }
+
+        .entregue {
+            background-color: white;
+        }
+    </style>
+</head>
+
+<body>
+    <h2>Controle de Pedidos</h2>
+    <form id="pedidoForm">
+        <label for="cliente">Nome do Cliente:</label><br>
+        <input type="text" id="cliente" name="cliente"><br>
+
+        <label for="sabores">Sabores:</label><br>
+        <textarea id="sabores" name="sabores"></textarea><br>
+
+        <label for="data">Data de Entrega:</label><br>
+        <input type="date" id="data" name="data"><br>
+
+        <label for="valor">Valor do Pedido:</label><br>
+        <input type="number" id="valor" name="valor"><br>
+
+        <label for="status">Status do Pedido:</label><br>
+        <select id="status" name="status">
+            <option value="producao">Produção</option>
+            <option value="separado">Separado</option>
+            <option value="entregue">Entregue</option>
+        </select><br><br>
+
+        <input type="button" value="Adicionar Pedido" onclick="adicionarPedido()">
+    </form>
+
+    <h3>Pedidos</h3>
+    <table id="tabelaPedidos">
+        <thead>
+            <tr>
+                <th>Nome do Cliente</th>
+                <th>Sabores</th>
+                <th>Data de Entrega</th>
+                <th>Valor do Pedido</th>
+                <th>Status do Pedido</th>
+                <th>Ações</th>
+            </tr>
+        </thead>
+        <tbody id="corpoTabela">
+        </tbody>
+        <tfoot>
+            <tr>
+                <td colspan="3" style="text-align: right;"><strong>Total:</strong></td>
+                <td id="totalValor">0</td>
+                <td></td>
+                <td><button onclick="resetarPedidos()">Resetar</button></td>
+            </tr>
+        </tfoot>
+    </table>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const pedidos = JSON.parse(localStorage.getItem('pedidos')) || [];
+            atualizarTabela(pedidos);
+            calcularTotalValor(pedidos);
+        });
+
+        function adicionarPedido() {
+            const form = document.getElementById('pedidoForm');
+            const pedido = {
+                cliente: form.cliente.value,
+                sabores: form.sabores.value,
+                data: form.data.value,
+                valor: form.valor.value,
+                status: form.status.value
+            };
+
+            let pedidos = JSON.parse(localStorage.getItem('pedidos')) || [];
+            pedidos.push(pedido);
+            localStorage.setItem('pedidos', JSON.stringify(pedidos));
+
+            atualizarTabela(pedidos);
+            calcularTotalValor(pedidos);
+
+            form.reset();
+        }
+
+        function atualizarTabela(pedidos) {
+            const corpoTabela = document.getElementById('corpoTabela');
+            corpoTabela.innerHTML = '';
+
+            pedidos.sort((a, b) => new Date(a.data) - new Date(b.data));
+
+            for (let pedido of pedidos) {
+                const tr = document.createElement('tr');
+
+                tr.innerHTML = `
+                    <td>${pedido.cliente}</td>
+                    <td>${pedido.sabores}</td>
+                    <td>${formatarData(pedido.data)}</td>
+                    <td>${pedido.valor}</td>
+                    <td class="${pedido.status}">${pedido.status}</td>
+                    <td>
+                        <button onclick="editarPedido('${pedido.cliente}')">Editar</button>
+                        <button onclick="excluirPedido('${pedido.cliente}')">Excluir</button>
+                    </td>
+                `;
+
+                corpoTabela.appendChild(tr);
+            }
+        }
+
+        function formatarData(data) {
+            const [ano, mes, dia] = data.split('-');
+            return `${dia}/${mes}/${ano}`;
+        }
+
+        function editarPedido(cliente) {
+            if (confirm('Deseja editar este pedido?')) {
+                const pedidos = JSON.parse(localStorage.getItem('pedidos')) || [];
+                const pedido = pedidos.find(p => p.cliente === cliente);
+
+                if (pedido) {
+                    const form = document.getElementById('pedidoForm');
+                    form.cliente.value = pedido.cliente;
+                    form.sabores.value = pedido.sabores;
+                    form.data.value = pedido.data;
+                    form.valor.value = pedido.valor;
+                    form.status.value = pedido.status;
+
+                    excluirPedido(cliente);
+                }
+            }
+        }
+
+        function excluirPedido(cliente) {
+            if (confirm('Deseja excluir este pedido?')) {
+                let pedidos = JSON.parse(localStorage.getItem('pedidos')) || [];
+                pedidos = pedidos.filter(p => p.cliente !== cliente);
+                localStorage.setItem('pedidos', JSON.stringify(pedidos));
+
+                atualizarTabela(pedidos);
+                calcularTotalValor(pedidos);
+            }
+        }
+
+        function calcularTotalValor(pedidos) {
+            const total = pedidos.reduce((acc, pedido) => {
+                if (pedido.status === 'entregue') {
+                    return acc + parseFloat(pedido.valor);
+                }
+                return acc;
+            }, 0);
+
+            document.getElementById('totalValor').textContent = total.toFixed(2);
+        }
+
+        function resetarPedidos() {
+            localStorage.removeItem('pedidos');
+            atualizarTabela([]);
+            document.getElementById('totalValor').textContent = '0';
+        }
+    </script>
+</body>
+
+</html>
