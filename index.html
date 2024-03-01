@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerenciamento de Pedidos</title>
+</head>
+<body>
+    <h2>Adicionar Pedido</h2>
+    <form>
+        <label for="cliente">Cliente:</label><br>
+        <input type="text" id="cliente" required><br>
+        
+        <label for="sabor">Sabor:</label><br>
+        <input type="text" id="sabor" required><br>
+        
+        <label for="quantidade">Quantidade:</label><br>
+        <input type="number" id="quantidade" required><br>
+        
+        <label for="dataEntrega">Data de Entrega:</label><br>
+        <input type="date" id="dataEntrega" required><br>
+        
+        <label for="status">Status:</label><br>
+        <select id="status" required>
+            <option value="Produção">Produção</option>
+            <option value="Separado">Separado</option>
+            <option value="Entregue">Entregue</option>
+        </select><br>
+        
+        <button type="button" onclick="addPedido()">Adicionar Pedido</button>
+    </form>
+
+    <h2>Lista de Pedidos</h2>
+    <ul id="pedidoList"></ul>
+
+    <script src="script.js"></script>
+</body>
+</html>
