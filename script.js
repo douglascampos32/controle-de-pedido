@@ -1,52 +1,45 @@
+// Função para adicionar um pedido
 function addPedido() {
+    // Obtém os valores dos campos do formulário
     var cliente = document.getElementById('cliente').value;
     var sabor = document.getElementById('sabor').value;
     var quantidade = document.getElementById('quantidade').value;
     var dataEntrega = document.getElementById('dataEntrega').value;
     var status = document.getElementById('status').value;
 
-    var url = `https://script.google.com/macros/s/AKfycbxd4oF-2eBOTBEg562-Wb49HKEkhcwBWiLrp2V3CrShDsxyNGhaumRWR6UN7vk6nPMz/exec`;
-    var params = "cliente=" + cliente + "&sabor=" + sabor + "&quantidade=" + quantidade + "&dataEntrega=" + dataEntrega + "&status=" + status;
+    // Cria um novo item de pedido
+    var pedido = {
+        cliente: cliente,
+        sabor: sabor,
+        quantidade: quantidade,
+        dataEntrega: dataEntrega,
+        status: status
+    };
 
-    var xhr = new XMLHttpRequest();
-    xhr.open("POST", url, true);
-    xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+    // Adiciona o novo item de pedido à lista
+    adicionarItemPedido(pedido);
 
-    xhr.onreadystatechange = function() {
-        if (xhr.readyState == 4 && xhr.status == 200) {
-            // Atualizar lista de pedidos após adicionar um novo pedido
-            getPedidos();
-        }
-    }
-
-    xhr.send(params);
+    // Limpa os campos do formulário após adicionar o pedido
+    limparCamposFormulario();
 }
 
-function getPedidos() {
-    var url = `https://script.google.com/macros/s/AKfycbxd4oF-2eBOTBEg562-Wb49HKEkhcwBWiLrp2V3CrShDsxyNGhaumRWR6UN7vk6nPMz/exec`;
-    
-    var xhr = new XMLHttpRequest();
-    xhr.open("GET", url, true);
-    xhr.onreadystatechange = function() {
-        if (xhr.readyState == 4 && xhr.status == 200) {
-            var response = JSON.parse(xhr.responseText);
-            renderPedidos(response);
-        }
-    }
-
-    xhr.send();
-}
-
-function renderPedidos(pedidos) {
+// Função para adicionar um item de pedido à lista
+function adicionarItemPedido(pedido) {
     var pedidoList = document.getElementById('pedidoList');
-    pedidoList.innerHTML = '';
+    var listItem = document.createElement('li');
 
-    pedidos.forEach(function(pedido) {
-        var listItem = document.createElement('li');
-        listItem.textContent = pedido.join(' - ');
-        pedidoList.appendChild(listItem);
-    });
+    // Formata o item de pedido como uma string
+    listItem.textContent = `${pedido.cliente} - ${pedido.sabor} - ${pedido.quantidade} - ${pedido.dataEntrega} - ${pedido.status}`;
+
+    // Adiciona o item de pedido à lista
+    pedidoList.appendChild(listItem);
 }
 
-// Carregar lista de pedidos quando a página é carregada
-window.onload = getPedidos;
+// Função para limpar os campos do formulário após adicionar um pedido
+function limparCamposFormulario() {
+    document.getElementById('cliente').value = '';
+    document.getElementById('sabor').value = '';
+    document.getElementById('quantidade').value = '';
+    document.getElementById('dataEntrega').value = '';
+    document.getElementById('status').value = 'Produção';
+}
