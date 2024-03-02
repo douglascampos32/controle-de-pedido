@@ -1,45 +1,65 @@
-// Função para adicionar um pedido
+var pedidos = [];
+
 function addPedido() {
-    // Obtém os valores dos campos do formulário
     var cliente = document.getElementById('cliente').value;
-    var sabor = document.getElementById('sabor').value;
-    var quantidade = document.getElementById('quantidade').value;
+    var sabores = document.getElementById('sabores').value.split('\n');
+    var quantidades = document.getElementById('quantidades').value.split('\n');
     var dataEntrega = document.getElementById('dataEntrega').value;
     var status = document.getElementById('status').value;
 
-    // Cria um novo item de pedido
     var pedido = {
         cliente: cliente,
-        sabor: sabor,
-        quantidade: quantidade,
+        sabores: sabores,
+        quantidades: quantidades,
         dataEntrega: dataEntrega,
         status: status
     };
 
-    // Adiciona o novo item de pedido à lista
-    adicionarItemPedido(pedido);
-
-    // Limpa os campos do formulário após adicionar o pedido
-    limparCamposFormulario();
+    pedidos.push(pedido);
+    renderPedidos();
 }
 
-// Função para adicionar um item de pedido à lista
-function adicionarItemPedido(pedido) {
+function renderPedidos() {
     var pedidoList = document.getElementById('pedidoList');
-    var listItem = document.createElement('li');
+    pedidoList.innerHTML = '';
 
-    // Formata o item de pedido como uma string
-    listItem.textContent = `${pedido.cliente} - ${pedido.sabor} - ${pedido.quantidade} - ${pedido.dataEntrega} - ${pedido.status}`;
-
-    // Adiciona o item de pedido à lista
-    pedidoList.appendChild(listItem);
+    pedidos.forEach(function(pedido) {
+        var listItem = document.createElement('li');
+        listItem.innerHTML = `
+            <strong>Cliente:</strong> ${pedido.cliente}<br>
+            <strong>Sabores:</strong> ${pedido.sabores.join(', ')}<br>
+            <strong>Quantidades:</strong> ${pedido.quantidades.join(', ')}<br>
+            <strong>Data de Entrega:</strong> ${pedido.dataEntrega}<br>
+            <strong>Status:</strong> ${pedido.status}<br>
+            <button onclick="editarPedido(${pedidos.indexOf(pedido)})">Editar</button>
+            <button onclick="excluirPedido(${pedidos.indexOf(pedido)})">Excluir</button>
+        `;
+        pedidoList.appendChild(listItem);
+    });
 }
 
-// Função para limpar os campos do formulário após adicionar um pedido
-function limparCamposFormulario() {
-    document.getElementById('cliente').value = '';
-    document.getElementById('sabor').value = '';
-    document.getElementById('quantidade').value = '';
-    document.getElementById('dataEntrega').value = '';
-    document.getElementById('status').value = 'Produção';
+function editarPedido(index) {
+    var pedido = pedidos[index];
+    var cliente = prompt('Novo cliente:', pedido.cliente);
+    var sabores = prompt('Novos sabores:', pedido.sabores.join('\n'));
+    var quantidades = prompt('Novas quantidades:', pedido.quantidades.join('\n'));
+    var dataEntrega = prompt('Nova data de entrega:', pedido.dataEntrega);
+    var status = prompt('Novo status:', pedido.status);
+
+    pedidos[index] = {
+        cliente: cliente,
+        sabores: sabores.split('\n'),
+        quantidades: quantidades.split('\n'),
+        dataEntrega: dataEntrega,
+        status: status
+    };
+
+    renderPedidos();
+}
+
+function excluirPedido(index) {
+    if (confirm('Tem certeza que deseja excluir este pedido?')) {
+        pedidos.splice(index, 1);
+        renderPedidos();
+    }
 }
