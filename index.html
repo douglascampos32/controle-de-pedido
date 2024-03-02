@@ -4,18 +4,19 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gerenciamento de Pedidos</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <h2>Adicionar Pedido</h2>
-    <form>
+    <form id="pedidoForm">
         <label for="cliente">Cliente:</label><br>
         <input type="text" id="cliente" required><br>
         
-        <label for="sabor">Sabor:</label><br>
-        <input type="text" id="sabor" required><br>
+        <label for="sabores">Sabores:</label><br>
+        <textarea id="sabores" required></textarea><br>
         
-        <label for="quantidade">Quantidade:</label><br>
-        <input type="number" id="quantidade" required><br>
+        <label for="quantidades">Quantidades:</label><br>
+        <textarea id="quantidades" required></textarea><br>
         
         <label for="dataEntrega">Data de Entrega:</label><br>
         <input type="date" id="dataEntrega" required><br>
@@ -32,6 +33,7 @@
 
     <h2>Lista de Pedidos</h2>
     <ul id="pedidoList"></ul>
-        <script src="script.js"></script>
+
+    <script src="script.js"></script>
 </body>
 </html>
