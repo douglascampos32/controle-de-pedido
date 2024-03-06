@@ -61,5 +61,9 @@ function excluirPedido(index) {
     if (confirm('Tem certeza que deseja excluir este pedido?')) {
         pedidos.splice(index, 1);
         renderPedidos();
+    
     }
-}
+    window.onload = function() {
+            renderizarTabela();
+        };
+
